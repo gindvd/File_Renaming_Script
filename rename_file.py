@@ -1,28 +1,42 @@
 from pathlib import Path
 import getopt, sys
-
-# take file directory as an argument or use cwd
+import os
 
 # start loop that iterates through all files in the directory 
+	# for each file, call the following functions:
 
-# for each file, call the following functions: 
+def rename_files(cwd):
 
-# get file extension
-  # remove file extension
-  # save file extension is separate value
-  # return file name with no extension
-    
+	for item in cwd.iterdir():
+		if item.is_file():
+			original_filename = os.path.basename(item)
+			filename, file_ext = os.path.splitext(original_filename)
 
-#replace dashes with underscores
+			#filename = dashesToUnderscores(filename)
+			#filename = removePunctuation(filename)
+			#filename = formatWords(filename, file_ext)
+
+			print(original_filename)
+			new_filename = str(filename) + str(file_ext)
+			print(new_filename)
+			os.rename(os.path.join(cwd, original_filename), os.path.join(cwd, new_filename))
+			
+
+def dashesToUnderscores(filename):
+	pass
+	#replace dashes with underscores
   # loop through all characters
   # find dashes, replace with underscores
 
-#remove punctuation
+def removePunctuation(filename):
+	pass
+	#remove punctuation
   # split file name via underscore
   # iterate through all characters
   # remove character if no alphanumeric value
 
-# lower or capitalize words
+def formatWords(filename, file_ext):
+	pass
   # split name via underscore
   # check file extenion
 
@@ -31,6 +45,7 @@ import getopt, sys
 
   #else
     # toLower() each word
+
 
 def getCWD():
   args = sys.argv[1:]
@@ -41,9 +56,7 @@ def getCWD():
     arguments, values = getopt.getopt(args, options, long_options)
     for currentArgs, currentVal in arguments:
       if currentArgs in ("-d", "--Directory"):
-        directory = Path(currentVal)
-				# Returns the full path of the driectory
-        return directory.resolve()
+        return Path(currentVal)
 
   except getopt.error as err:
     print(str(err))
@@ -55,7 +68,7 @@ def main():
 	if cwd == None:
 		cwd = Path.cwd()
 
-	print(cwd)
+	rename_files(cwd)
 
 if __name__ == "__main__":
   main()    
