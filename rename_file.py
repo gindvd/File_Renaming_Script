@@ -14,7 +14,7 @@ def rename_files(cwd):
 
 			filename = dashesToUnderscores(filename)
 			filename = removePunctuation(filename)
-			#filename = formatWords(filename, file_ext)
+			filename = formatWords(filename, file_ext)
 
 			print(original_filename)
 			new_filename = str(filename) + str(file_ext)
@@ -36,21 +36,25 @@ def removePunctuation(filename):
 	new_filename = ""
 
 	for char in filename:
-		if char.isalnum():
+		if char.isalnum() or char == "_":
 			new_filename += char
 
 	return new_filename
 
 def formatWords(filename, file_ext):
-	pass
-  # split name via underscore
-  # check file extenion
+	media_file_ext = [".gif", ".mp4", ".jpg", ".jpeg", ".png", ".bmp", ".webp", ".jfif"]
+	split_name = filename.split("_")
+	formatted_words = []
 
-  # if file extension image, gif, vide or text file 
-    # capitalize each word in name
+	for word in split_name:
+		if file_ext in media_file_ext:
+			word = word.capitalize()
+		else:
+			word.lower()
 
-  #else
-    # toLower() each word
+		formatted_words.append(word)
+
+	return "_".join(formatted_words) 
 
 
 def getCWD():
