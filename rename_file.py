@@ -12,7 +12,7 @@ def rename_files(cwd):
 			original_filename = os.path.basename(item)
 			filename, file_ext = os.path.splitext(original_filename)
 
-			#filename = dashesToUnderscores(filename)
+			filename = dashesToUnderscores(filename)
 			#filename = removePunctuation(filename)
 			#filename = formatWords(filename, file_ext)
 
@@ -23,10 +23,13 @@ def rename_files(cwd):
 			
 
 def dashesToUnderscores(filename):
-	pass
-	#replace dashes with underscores
-  # loop through all characters
-  # find dashes, replace with underscores
+	new_filename = ""
+	for char in filename:
+		if char == "-":
+			char = "_"
+		new_filename += char
+
+	return new_filename	
 
 def removePunctuation(filename):
 	pass
