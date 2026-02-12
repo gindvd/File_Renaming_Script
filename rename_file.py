@@ -1,10 +1,9 @@
-import os, sys
+import os
+import sys
 import argparse
 
 from pathlib import Path
 from PIL import Image
-
-from path_type import PathType
 
 IMG_EXT = [".jpeg", ".jgp", ".jfif", ".pjpeg", ".pjpg", 
            ".png", ".apng", ".webp", ".gif", ".bmp", 
@@ -14,79 +13,21 @@ VID_EXT = [".mp4", ".mov", ".mkv" , ".wmv", ".avi", "webm", ".mpg", ".mpeg"]
 
 AUD_EXT = [".m4a", ".mp3", ".wav", ".aac", ".flac", ".ogg", ".wma", ".aiff"]
 
-def rename_files(target_directory, add_resolution):
+def rename_files(target_directory):
 
-	for item in target_directory.iterdir():
-		if item.is_file():
-			original_filename = os.path.basename(item)
-			filename, file_ext = os.path.splitext(original_filename)
-
-			filename = replace_with_underscores(filename)
-			filename = remove_punctuation(filename)
-			filename = format_words(filename, file_ext)
-
-			if add_resolution:
-				filename = append_resolution(filename, file_ext)
-
-			new_filename = filename + file_ext
-			os.rename(os.path.join(target_directory, original_filename), os.path.join(target_directory, new_filename))
-			
-# Replaces spaces and dashes with underscores
-def replace_with_underscores(filename):
-	new_filename = ""
-
-	for char in filename:
-		if char == "-" or char == " ":
-			char = "_"
-		new_filename += char
-
-	return new_filename	
-
-def remove_punctuation(filename):
-	new_filename = ""
-
-	for char in filename:
-		if char.isalnum() or char == "_":
-			new_filename += char
-
-	return new_filename
-
-def format_words(filename, file_ext):
-	media_file_ext = IMG_EXT + VID_EXT + AUD_EXT
-	split_name = filename.split("_")
-	formatted_words = []
-
-	for word in split_name:
-		if file_ext in media_file_ext:
-			word = word.capitalize()
-		else:
-			word.lower()
-
-		formatted_words.append(word)
-
-	return "_".join(formatted_words) 
-
-def append_resolution(file_name):
-	if file_ext in IMG_EXT:
-		with Image.open(filename) as image:
-			width, height = image.size
-			
-			return filename + str(width) + "x" + str(height)
-			
-		return filename
+	for object in os.scandir(target_directory):
+		if os.path.isfile(object):
+			basename = os.path.basename(object)
+			filename, extension = os.path.splitext(basename)
 
 def main():
-	parser = argparse.ArgumentParser(description='Set target directory, and options to rename files')
+	target_directory = sys.argv[1]
 
-	parser.add_argument('target_directory', type=PathType(exists=True, type='dir'), help="The target directory storing the files to be renamed.")
-	parser.add_argument('-r', '--resolution', action='store_true', help="Add image resolution to the file's name.")
+	if not os.path.isdir(target_directory):
+		print("{} does not exist.".format(target_directory))
+		return
 
-	args = parser.parse_args()
-
-	target_directory = args.target_directory
-	add_resolution = args.resolution
-
-	rename_files(target_directory, add_resolution)
+	rename_files(target_directory)
 
 if __name__ == "__main__":
   main()    
