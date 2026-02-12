@@ -1,9 +1,12 @@
 import os
 import sys
 import argparse
+import math
 
 from pathlib import Path
 from PIL import Image
+
+from progress_bar import ProgressBar
 
 IMG_EXT = [".jpeg", ".jpg", ".jfif", ".pjpeg", ".pjpg", 
            ".png", ".apng", ".webp", ".gif", ".bmp", 
@@ -14,6 +17,10 @@ VID_EXT = [".mp4", ".mov", ".mkv" , ".wmv", ".avi", "webm", ".mpg", ".mpeg"]
 AUD_EXT = [".m4a", ".mp3", ".wav", ".aac", ".flac", ".ogg", ".wma", ".aiff"]
 
 def rename_files(target_directory):
+	total_files = len([name for name in os.listdir(target_directory) if os.path.isfile(os.path.join(target_directory, name))])
+	print(total_files)
+	count = 0
+	progress_bar = ProgressBar()
 
 	for object in os.scandir(target_directory):
 		if os.path.isfile(object):
@@ -26,8 +33,11 @@ def rename_files(target_directory):
 
 			new_basename = filename + extension
 			new_filename = os.path.join(target_directory, new_basename)
-			print(new_filename)
-			os.rename(object, new_filename)		
+			os.rename(object, new_filename)
+
+			count += 1
+			percentage_value = math.floor((count / total_files) * 100)
+			progress_bar.update(percentage_value)
 
 def replace_with_underscores(filename):
 	string = ""
