@@ -2,9 +2,6 @@ from pathlib import Path
 import getopt, sys
 import os
 
-# start loop that iterates through all files in the directory 
-	# for each file, call the following functions:
-
 def rename_files(cwd):
 
 	for item in cwd.iterdir():
