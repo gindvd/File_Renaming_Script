@@ -1,6 +1,16 @@
+import os, sys
+import argparse
+
 from pathlib import Path
-import getopt, sys
-import os
+from PIL import Image
+
+IMG_EXT = [".jpeg", ".jgp", ".jfif", ".pjpeg", ".pjpg", 
+           ".png", ".apng", ".webp", ".gif", ".bmp", 
+           ".svg", ".tiff", ".tif", ".avif", ".ico", ".cur"]
+
+VID_EXT = [".mp4", ".mov", ".mkv" , ".wmv", ".avi", "webm", ".mpg", ".mpeg"]
+
+AUD_EXT = [".m4a", ".mp3", ".wav", ".aac", ".flac", ".ogg", ".wma", ".aiff"]
 
 def rename_files(cwd):
 
@@ -37,7 +47,7 @@ def removePunctuation(filename):
 	return new_filename
 
 def formatWords(filename, file_ext):
-	media_file_ext = [".gif", ".mp4", ".jpg", ".jpeg", ".png", ".bmp", ".webp", ".jfif"]
+	media_file_ext = IMG_EXT + VID_EXT + AUD_EXT
 	split_name = filename.split("_")
 	formatted_words = []
 
@@ -51,29 +61,21 @@ def formatWords(filename, file_ext):
 
 	return "_".join(formatted_words) 
 
-
-def getCWD():
-  args = sys.argv[1:]
-  options = "d:"
-  long_options = ["Directory="]
-
-  try:
-    arguments, values = getopt.getopt(args, options, long_options)
-    for currentArgs, currentVal in arguments:
-      if currentArgs in ("-d", "--Directory"):
-        return Path(currentVal)
-
-  except getopt.error as err:
-    print(str(err))
-
 def main():
-	cwd = getCWD()
-  
-	# If no directory is given, sets default path to the current working directory
-	if cwd == None:
-		cwd = Path.cwd()
+	parser = argparse.ArgumentParser(description='Set target directory, and options to rename files')
 
-	rename_files(cwd)
+	parser.add_argument('target_directory', type=str, help="The target directory storing the files to be renamed.")
+	parser.add_argument('-r', '--resolution', action='store_true', help="Add image resolution to the file's name.")
+
+	if os.path.isdir(args.target_directory):
+		target_directory = args.target_directory
+	elif args.target_directory == "":
+		target_directory = os.getcwd()
+	else:
+		print("{} does not exist!".format(args.target_directory))
+		sys.exit(1)
+
+	rename_files(target_directory, args.resolution)
 
 if __name__ == "__main__":
   main()    
