@@ -12,22 +12,22 @@ VID_EXT = [".mp4", ".mov", ".mkv" , ".wmv", ".avi", "webm", ".mpg", ".mpeg"]
 
 AUD_EXT = [".m4a", ".mp3", ".wav", ".aac", ".flac", ".ogg", ".wma", ".aiff"]
 
-def rename_files(cwd):
+def rename_files(target_directory, add_resolution):
 
-	for item in cwd.iterdir():
+	for item in target_directory.iterdir():
 		if item.is_file():
 			original_filename = os.path.basename(item)
 			filename, file_ext = os.path.splitext(original_filename)
 
-			filename = addUnderscores(filename)
-			filename = removePunctuation(filename)
-			filename = formatWords(filename, file_ext)
+			filename = replace_with_underscores(filename)
+			filename = remove_punctuation(filename)
+			filename = format_words(filename, file_ext)
 
 			new_filename = filename + file_ext
-			os.rename(os.path.join(cwd, original_filename), os.path.join(cwd, new_filename))
+			os.rename(os.path.join(target_directory, original_filename), os.path.join(target_directory, new_filename))
 			
-
-def addUnderscores(filename):
+# Replaces spaces and dashes with underscores
+def replace_with_underscores(filename):
 	new_filename = ""
 
 	for char in filename:
@@ -37,7 +37,7 @@ def addUnderscores(filename):
 
 	return new_filename	
 
-def removePunctuation(filename):
+def remove_punctuation(filename):
 	new_filename = ""
 
 	for char in filename:
@@ -46,7 +46,7 @@ def removePunctuation(filename):
 
 	return new_filename
 
-def formatWords(filename, file_ext):
+def format_words(filename, file_ext):
 	media_file_ext = IMG_EXT + VID_EXT + AUD_EXT
 	split_name = filename.split("_")
 	formatted_words = []
@@ -72,10 +72,13 @@ def main():
 	elif args.target_directory == "":
 		target_directory = os.getcwd()
 	else:
+		# Exits script if the directory doesn't exist
 		print("{} does not exist!".format(args.target_directory))
 		sys.exit(1)
 
-	rename_files(target_directory, args.resolution)
+	add_resolution = args.resolution
+
+	rename_files(target_directory, add_resolution)
 
 if __name__ == "__main__":
   main()    
