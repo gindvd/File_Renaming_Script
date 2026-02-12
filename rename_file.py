@@ -4,6 +4,8 @@ import argparse
 from pathlib import Path
 from PIL import Image
 
+from path_type import PathType
+
 IMG_EXT = [".jpeg", ".jgp", ".jfif", ".pjpeg", ".pjpg", 
            ".png", ".apng", ".webp", ".gif", ".bmp", 
            ".svg", ".tiff", ".tif", ".avif", ".ico", ".cur"]
@@ -22,6 +24,9 @@ def rename_files(target_directory, add_resolution):
 			filename = replace_with_underscores(filename)
 			filename = remove_punctuation(filename)
 			filename = format_words(filename, file_ext)
+
+			if add_resolution:
+				filename = append_resolution(filename, file_ext)
 
 			new_filename = filename + file_ext
 			os.rename(os.path.join(target_directory, original_filename), os.path.join(target_directory, new_filename))
@@ -61,21 +66,24 @@ def format_words(filename, file_ext):
 
 	return "_".join(formatted_words) 
 
+def append_resolution(file_name):
+	if file_ext in IMG_EXT:
+		with Image.open(filename) as image:
+			width, height = image.size
+			
+			return filename + str(width) + "x" + str(height)
+			
+		return filename
+
 def main():
 	parser = argparse.ArgumentParser(description='Set target directory, and options to rename files')
 
-	parser.add_argument('target_directory', type=str, help="The target directory storing the files to be renamed.")
+	parser.add_argument('target_directory', type=PathType(exists=True, type='dir'), help="The target directory storing the files to be renamed.")
 	parser.add_argument('-r', '--resolution', action='store_true', help="Add image resolution to the file's name.")
 
-	if os.path.isdir(args.target_directory):
-		target_directory = args.target_directory
-	elif args.target_directory == "":
-		target_directory = os.getcwd()
-	else:
-		# Exits script if the directory doesn't exist
-		print("{} does not exist!".format(args.target_directory))
-		sys.exit(1)
+	args = parser.parse_args()
 
+	target_directory = args.target_directory
 	add_resolution = args.resolution
 
 	rename_files(target_directory, add_resolution)
