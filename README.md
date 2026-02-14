@@ -37,7 +37,7 @@ changed to execute with the chmod +x rename_file.py commannd.
 
 If the script has an associated virtual environment, change the shebang to point to the virtual environment.
 
-##How To Add Optional Progress Bar
+## How To Add Optional Progress Bar
 
 A CLI rendered progress bar can be added to this script to get a visual representation of files iterated over. <br>
 The progress bar script can be cloned from: https://github.com/gindvd/CLI_progress_bar
