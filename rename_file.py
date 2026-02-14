@@ -1,4 +1,4 @@
-#!/usr/bin/eny python3
+#!/usr/bin/env python3
 
 import os, sys
 import argparse
@@ -6,7 +6,7 @@ import math
 
 from PIL import Image
 
-#from progress_bar import ProgressBar
+from progress_bar import ProgressBar
 
 IMG_EXT = [".jpeg", ".jpg", ".jfif", ".pjpeg", ".pjpg", 
            ".png", ".apng", ".webp", ".gif", ".bmp", 
@@ -20,7 +20,7 @@ def rename_files(args):
   target_directory = args.directory
   set_res_option = args.include_resolution
 
-  #progress_bar = ProgressBar()
+  progress_bar = ProgressBar()
   file_count = 0
   total_files = scan_dir(target_directory)
 
@@ -44,9 +44,9 @@ def rename_files(args):
       os.rename(item, new_filename)
 
       file_count += 1
-      #percentage = math.floor((file_count / total_files) * 100)
+      percentage = math.floor((file_count / total_files) * 100)
 
-      #progress_bar.update(percentage)
+      progress_bar.update(percentage)
 
 def replace_with_underscores(filename):
   string = ""
