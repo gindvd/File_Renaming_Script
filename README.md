@@ -32,7 +32,17 @@ Optinal arguments:
 Adding -ir or --include-resolution to the run command will add image resolution to image file's name.<br>
 Ex: python3 rename_file.py /home/USERNAME/Pictures/Wallpaper --include-resolution <br>
 
-For Linux and Unix-like operating-systems, the file contains a sheband so the script's permission can be 
-changed to execute.
+For Linux and other Unix-like operating-systems, the file contains a sheband so the script's permission can be 
+changed to execute with the chmod +x rename_file.py commannd.
 
-If the script has an associated virtual environment, change the shbang to point to the virtual environment.
+If the script has an associated virtual environment, change the shebang to point to the virtual environment.
+
+##How To Add Optional Progress Bar
+
+A CLI rendered progress bar can be added to this script to get a visual representation of files iterated over. <br>
+The progress bar script can be cloned from: https://github.com/gindvd/CLI_progress_bar
+
+Once file is cloned, add the progress_bar.py file into the same directory that this script resides. <br>
+Then the following lines in the rename_file.py script can be uncommented by deleteing the # symbol at the start of the line:<br>
+Line 9<br>Line 23<br>Line 47<br>Line 49
+
