@@ -1,3 +1,5 @@
+#!/usr/bin/eny python3
+
 import os, sys
 import argparse
 import math
