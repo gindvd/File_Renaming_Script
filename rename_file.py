@@ -82,14 +82,18 @@ def format_words(filename, extension):
 
   return "_".join(formatted_words)
 
-def append_resolution(object, filename, extension):  
+def append_resolution(object, filename, extension):
+  split_name = filename.split("_")
+
   if extension in IMG_EXT:
     with Image.open(object) as image:
       width, height = image.size
     
-    appended_name = filename + "_" + str(width) + "x" + str(height)
+    resolution = str(width) + "x" + str(height)
 
-    return appended_name
+    # Only adds the files resolution if it's not already in the filename
+    if resolution not in split_name:
+      return filename + "_" + resolution
 
   # If not an image file, returns file name with no changes
   return filename  
