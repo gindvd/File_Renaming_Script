@@ -12,7 +12,7 @@ IMG_EXT = [".jpeg", ".jpg", ".jfif", ".pjpeg", ".pjpg",
            ".png", ".apng", ".webp", ".gif", ".bmp", 
            ".svg", ".tiff", ".tif", ".avif", ".ico", ".cur"]
 
-VID_EXT = [".mp4", ".mov", ".mkv" , ".wmv", ".avi", "webm", ".mpg", ".mpeg"]
+VID_EXT = [".mp4", ".mov", ".mkv" , ".wmv", ".avi", ".webm", ".mpg", ".mpeg"]
 
 AUD_EXT = [".m4a", ".mp3", ".wav", ".aac", ".flac", ".ogg", ".wma", ".aiff"]
 
@@ -24,11 +24,11 @@ def rename_files(args):
   file_count = 0
   total_files = scan_dir(target_directory)
 
-  for object in os.scandir(target_directory):
-    # Checks if object is file and not a folder / directory
-    if os.path.isfile(object):
+  for item in os.scandir(target_directory):
+    # Checks if item is file and not a folder / directory
+    if os.path.isfile(item):
       # Separaetes file name and file extension from full path
-      basename = os.path.basename(object)
+      basename = os.path.basename(item)
       # Splits file name from file extenstion
       filename, extension = os.path.splitext(basename)
 
@@ -37,11 +37,11 @@ def rename_files(args):
       filename = format_words(filename, extension)
 
       if set_res_option: 
-        filename = append_resolution(object, filename, extension)
+        filename = append_resolution(item, filename, extension)
 
       new_basename = filename + extension
       new_filename = os.path.join(target_directory, new_basename)
-      os.rename(object, new_filename)
+      os.rename(item, new_filename)
 
       file_count += 1
       percentage = math.floor((file_count / total_files) * 100)
@@ -82,11 +82,11 @@ def format_words(filename, extension):
 
   return "_".join(formatted_words)
 
-def append_resolution(object, filename, extension):
+def append_resolution(item, filename, extension):
   split_name = filename.split("_")
 
   if extension in IMG_EXT:
-    with Image.open(object) as image:
+    with Image.open(item) as image:
       width, height = image.size
     
     resolution = str(width) + "x" + str(height)
@@ -125,4 +125,3 @@ def main():
 
 if __name__ == "__main__":
   main()    
-    
