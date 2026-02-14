@@ -17,20 +17,20 @@ easy track of file resolutions for wallpapers.
 
 This script requires the pillow third party library.
 
-To istall use: pip3 install pillow
+To istall use: pip3 install pillow <br>
 It is recommended to set up a python virtual environmnt inside the directory where 
 this script is store then install pip to this virtual environmnt.
 
 The script requires a directory path as an argument when launching the script.
 
-Examples of command to run script: 
-For Windows: python3 rename_file.py C:\Users\USERNAME\Pictures\Wallpaper
-For Linux: python3 rename_file.py /home/USERNAME/Pictures/Wallpaper
+Examples of command to run script: <br>
+For Windows: python3 rename_file.py C:\Users\USERNAME\Pictures\Wallpaper <br>
+For Linux: python3 rename_file.py /home/USERNAME/Pictures/Wallpaper <br>
 
 Optinal arguments:
 
-Adding -ir or --include-resolution to the run command will add image resolution to image file's name.
-Ex: python3 rename_file.py /home/USERNAME/Pictures/Wallpaper --include-resolution
+Adding -ir or --include-resolution to the run command will add image resolution to image file's name.<br>
+Ex: python3 rename_file.py /home/USERNAME/Pictures/Wallpaper --include-resolution <br>
 
 For Linux and Unix-like operating-systems, the file contains a sheband so the script's permission can be 
 changed to execute.
