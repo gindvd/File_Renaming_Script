@@ -69,7 +69,10 @@ def remove_punctuation_characters(filename):
 
 def format_words(filename, extension):
   media_file_ext = IMG_EXT + VID_EXT + AUD_EXT
-  split_name = filename.split("_")
+  # Creates a new list of words that arent equal to ""
+  # Also removes multiple underscores stringed together
+  split_name = remove_empty_strings(filename.split("_"))
+
   formatted_words = []
 
   for word in split_name:
@@ -81,6 +84,15 @@ def format_words(filename, extension):
     formatted_words.append(word)
 
   return "_".join(formatted_words)
+
+def remove_empty_strings(string_list):
+  list = []
+
+  for word in string_list:
+    if word != "":
+      list.append(word)
+
+  return list
 
 def append_resolution(item, filename, extension):
   split_name = filename.split("_")
