@@ -5,7 +5,7 @@ import math
 
 from PIL import Image
 
-from progress_bar import ProgressBar
+from src.progress_bar import ProgressBar
 
 def rename_files(args):
   target_directory = args.directory
