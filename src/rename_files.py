@@ -1,52 +1,62 @@
-#!/usr/bin/env python3
-
-import os, sys
+import os
 import argparse
+import re
 import math
 
 from PIL import Image
 
-#from progress_bar import ProgressBar
-
-IMG_EXT = [".jpeg", ".jpg", ".jfif", ".pjpeg", ".pjpg", 
-           ".png", ".apng", ".webp", ".gif", ".bmp", 
-           ".svg", ".tiff", ".tif", ".avif", ".ico", ".cur"]
-
-VID_EXT = [".mp4", ".mov", ".mkv" , ".wmv", ".avi", ".webm", ".mpg", ".mpeg"]
-
-AUD_EXT = [".m4a", ".mp3", ".wav", ".aac", ".flac", ".ogg", ".wma", ".aiff"]
+from progress_bar import ProgressBar
 
 def rename_files(args):
   target_directory = args.directory
-  set_res_option = args.include_resolution
+  append_resolution = args.resolution
+  remove_punctuation = args.rm_punctuation
+  capitalize = args.capitalize
 
-  #progress_bar = ProgressBar()
+  progress_bar = ProgressBar()
   file_count = 0
   total_files = scan_dir(target_directory)
 
   for item in os.scandir(target_directory):
     # Checks if item is file and not a folder / directory
     if os.path.isfile(item):
-      # Separaetes file name and file extension from full path
-      basename = os.path.basename(item)
+
+      base_name = os.path.basename(item)
       # Splits file name from file extenstion
-      filename, extension = os.path.splitext(basename)
+      name, ext = os.path.splitext(base_name)
 
-      filename = replace_with_underscores(filename)
-      filename = remove_punctuation_characters(filename)
-      filename = format_words(filename, extension)
+      new_name = replace_with_underscores(name)
+      new_name = remove_empty_strings(new_name)
 
-      if set_res_option: 
-        filename = append_resolution(item, filename, extension)
+      if remove_punctuation:
+        new_name = remove_punctuation_characters(new_name)
 
-      new_basename = filename + extension
+      if append_resolution:
+        new_name = append_image_resolution(item, new_name)
+
+      if capitalize:
+        new_name = capitalize_words(new_name)
+
+      new_basename = new_name + ext
       new_filename = os.path.join(target_directory, new_basename)
-      os.rename(item, new_filename)
 
+      try:
+        os.rename(item, new_filename)
+      except FileExistsError:
+        os.remove(item)
+      
       file_count += 1
-      #percentage = math.floor(file_count / total_files) * 100
+      percentage = math.floor(file_count / total_files) * 100
 
-      #progress_bar.update(percentage)
+      progress_bar.update(percentage)
+
+def valid_image_file(file: os.Pathlike) -> bool:
+  try:
+    with Image.open(file) as img:
+      img.verify()
+      return True
+  except (IOError, SyntaxError):
+    return False
 
 def replace_with_underscores(filename):
   string = ""
@@ -58,33 +68,6 @@ def replace_with_underscores(filename):
 
   return string	
 
-def remove_punctuation_characters(filename):
-  string = ""
-
-  for char in filename:
-    if char.isalnum() or char == "_":
-      string += char
-
-  return string
-
-def format_words(filename, extension):
-  media_file_ext = IMG_EXT + VID_EXT + AUD_EXT
-  # Creates a new list of words that arent equal to ""
-  # Also removes multiple underscores stringed together
-  split_name = remove_empty_strings(filename.split("_"))
-
-  formatted_words = []
-
-  for word in split_name:
-    if extension in media_file_ext:
-      word = word.capitalize()
-    else:
-      word = word.lower()
-
-    formatted_words.append(word)
-
-  return "_".join(formatted_words)
-
 def remove_empty_strings(string_list):
   list = []
 
@@ -94,21 +77,44 @@ def remove_empty_strings(string_list):
 
   return list
 
-def append_resolution(item, filename, extension):
-  split_name = filename.split("_")
+def remove_punctuation_characters(filename):
+  string = ""
 
-  if extension in IMG_EXT:
-    with Image.open(item) as image:
-      width, height = image.size
+  for char in filename:
+    if char.isalnum() or char == "_":
+      string += char
+
+  return string
+
+def append_image_resolution(item, name):
+  if not valid_image_file(item):
+    return name
+
+  split_name = name.split("_")
+
+  with Image.open(item) as image:
+    width, height = image.size
+
+  resolution = str(width) + "x" + str(height)
+
+  # Only adds the files resolution if it's not already in the filename
+  if resolution not in split_name:
+    return name + "_" + resolution
+
+  return name
+
+def capitalize_words(name):
+  split_name = name.split("_")
+
+  new_name = []
+
+  for word in split_name:
+    if re.match("[a-zA-Z]", word[:1]):
+      word = word.capitalize()
     
-    resolution = str(width) + "x" + str(height)
-
-    # Only adds the files resolution if it's not already in the filename
-    if resolution not in split_name:
-      return filename + "_" + resolution
-
-  # If not an image file, returns file name with no changes
-  return filename  
+    new_name.append(word)
+  
+  return "_".join(new_name)
 
 def scan_dir(target_directory):
   files = 0
@@ -120,9 +126,17 @@ def parse_args():
   parser = argparse.ArgumentParser(prog='Rename Files Script', 
                                   description='Script renames all files in a given directory.')
 
-  parser.add_argument('directory', help='Give the directory where files to be renamed reside.')
-  parser.add_argument('-ir','--include-resolution', action='store_true', 
-                      help='When set, tells script to include the images resolution in the file name.')
+  parser.add_argument('directory', help='Directory to scan, and rename all files')
+
+  parser.add_argument('-r','--resolution', action='store_true', 
+                      help="Append image resolution to file's name.")
+  
+  
+  parser.add_argument("-rp", "--rm_punctuation", action="store_true",
+                      help="Remove all non-alphanumeric characters from filename")
+  
+  parser.add_argument("-c", "--capitalize", action="store_true",
+                      help="Capitalize all words in files_name")
       
   return parser.parse_args()
 
